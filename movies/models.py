@@ -35,7 +35,7 @@ class Movie(models.Model):
     credits = models.ManyToManyField(Person, through="MovieCredit")
 
     def __str__(self):
-        return self.title
+        return self.title + " " + str(self.release_date.year)
 
 
 class MovieCredit(models.Model):
