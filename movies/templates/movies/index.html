@@ -1,9 +1,16 @@
+{% extends "movies/base.html" %}
+{% block article %}
+
+<a href="your_name/">Pon tu nombre</a>
+    
 {% if movie_list %}
     <ul>
     {% for movie in movie_list%}
-        <li><a href="/movies/{{ movie.id }}/">{{ movie.title }}</a></li>
+        <li><a hx-post="/movies/{{ movie.id }}/" hx-swap="innerHTML" href="/movies/{{ movie.id }}/">{{ movie.title }}</a></li>
     {% endfor %}
     </ul>
 {% else %}
     <p>No movies are available.</p>
 {% endif %}
+
+ {% endblock article%}
