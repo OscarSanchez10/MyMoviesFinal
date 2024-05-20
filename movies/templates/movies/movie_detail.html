@@ -1,43 +1,69 @@
 {% extends "movies/base.html" %}
-{% block article %}
+{% load humanize %}
+{% block title %}{{ movie.title }} - Detalles{% endblock %}
 
-  <div class="flex h-[32rem] bg-slate-200 my-4">
-            <img class="" src="https://image.tmdb.org/t/p/w600_and_h900_bestv2/{{movie.poster_path}}" alt="the imitation game poster">
-            <header>
-            <h1 class="movie-title"> {{movie.title}}</h1>
-            <div class="movie-info">
-                <p>  {{movie.release_date|date:"Y"}}</p> 
-                <ul class="movie-genre"> 
-                    <li> History | </li>
-                    <li> Drama | </li>
-                    <li> Thriller | </li>
-                    <li> War </li>
+{% block content %}
+<div class="w-full px-4 my-8">
+    <div class="flex flex-col md:flex-row bg-gray-800 text-white p-6 rounded-lg">
+        <img class="w-full md:w-1/3 h-auto rounded-lg mb-4 md:mb-0 md:mr-6" src="https://image.tmdb.org/t/p/w600_and_h900_bestv2/{{ movie.poster_path }}" alt="{{ movie.title }}">
+        <div class="w-full md:w-2/3">
+            <h1 class="text-3xl font-bold mb-2">{{ movie.title }}</h1>
+            <div class="mb-4">
+                <span class="text-gray-400">{{ movie.release_date|date:"Y" }}</span>
+                <ul class="inline-block ml-2">
+                    {% for genre in movie.genres.all %}
+                        <li class="inline-block text-sm bg-sky-600 px-2 py-1 rounded mr-1">{{ genre.name }}</li>
+                    {% endfor %}
                 </ul>
-                <p>- 1h 53m</p>  
-            </div>         
-            
-            <h1>Overview</h1>
-            <p>{{movie.overview}}</p>
-
-            <details>
-                <summary>Production Details</summary>
-                <p> {{movie.budget}} </p>
-                <p> {{ movie.revenue}}</p>
+                <p class="text-gray-400 mt-2">{{ running_time_hours }}h {{ running_time_minutes }}m</p>
+            </div>
+            <h2 class="text-2xl font-semibold mb-2">Overview</h2>
+            <p class="mb-4">{{ movie.overview }}</p>
+            <details class="bg-gray-700 p-4 rounded mb-4">
+                <summary class="text-lg font-semibold">Production Details</summary>
+                <p class="mt-2">Budget: ${{ movie.budget|intcomma }}</p>
+                <p>Revenue: ${{ movie.revenue|intcomma }}</p>
             </details>
-            </header>
+            <div class="flex items-center text-yellow-400">
+                {% for star in stars.full %}
+                    <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M9.049.286a1 1 0 0 1 1.902 0l1.286 4.016a1 1 0 0 0 .95.69h4.106a1 1 0 0 1 .592 1.81l-3.335 2.526a1 1 0 0 0-.363 1.118l1.286 4.016a1 1 0 0 1-1.536 1.118L10 14.613l-3.345 2.526a1 1 0 0 1-1.536-1.118l1.286-4.016a1 1 0 0 0-.363-1.118L2.707 6.802a1 1 0 1 1 .592-1.81h4.106a1 1 0 0 0 .95-.69L9.049.286z"/></svg>
+                {% endfor %}
+                {% if stars.half %}
+                    <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M10 15l-5.878 3.09 1.122-6.545L.489 7.545l6.564-.955L10 1l2.947 5.59 6.564.955-4.755 4.001 1.122 6.545z"/></svg>
+                {% endif %}
+                {% for star in stars.empty %}
+                    <svg class="w-5 h-5 fill-current text-gray-500" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M9.049.286a1 1 0 0 1 1.902 0l1.286 4.016a1 1 0 0 0 .95.69h4.106a1 1 0 0 1 .592 1.81l-3.335 2.526a1 1 0 0 0-.363 1.118l1.286 4.016a1 1 0 0 1-1.536 1.118L10 14.613l-3.345 2.526a1 1 0 0 1-1.536-1.118l1.286-4.016a1 1 0 0 0-.363-1.118L2.707 6.802a1 1 0 1 1 .592-1.81h4.106a1 1 0 0 0 .95-.69L9.049.286z"/></svg>
+                {% endfor %}
+                <span class="ml-2">{{ average_rating|floatformat:1 }} / 100</span>
+            </div>
         </div>
+    </div>
 
-        <h1>Top Billed Cast</h1>
-        <div class="cast"> 
-            <div class="cast-item"> 
-                <img src="img/cumberbatch.jpg" alt="Benedict Cumberbatch photo">
-                <h1> Benedict Cumberbatch</h1>
+    <div class="flex items-center justify-between mb-4">
+        <h2 class="text-2xl font-bold">Reseñas</h2>
+        <a href="{% url 'add_review' movie.tmdb_id %}" class="mt-2 rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Añadir Reseña</a>
+    </div>
+    <div class="space-y-4">
+        {% for review in reviews %}
+            <div class="bg-gray-800 p-4 rounded">
+                <h3 class="text-lg font-semibold">{{ review.user.username }}</h3>
+                <p class="text-gray-400">{{ review.rating }} / 100</p>
+                <p class="text-gray-400 mt-2">{{ review.review }}</p>
             </div>
-            <div class="cast-item"> 
-                <img src="img/knightley.jpg" alt="Keira Knightley photo">
-                <h1> Keira Knightley</h1>
+        {% endfor %}
+    </div>
+
+    <h2 class="text-2xl font-bold mt-8 mb-4">Top Billed Cast</h2>
+    <div class="grid grid-cols-2 md:grid-cols-6 gap-4">
+        {% for credit in credits %}
+            <div class="bg-gray-800 p-4 rounded h-90"> <!-- Ajusta la altura de los actores -->
+                <a href="{% url 'actor_detail' credit.person.tmdb_id %}">
+                    <img class="w-full h-64 object-cover rounded mb-2" src="{% if credit.person.profile_path %}https://image.tmdb.org/t/p/w300_and_h450_bestv2{{ credit.person.profile_path }}{% else %}https://rotaractclubofkandy.org/wp-content/uploads/2021/09/Avatar-Male-scaled-1.jpg{% endif %}" alt="{{ credit.person.name }}">
+                </a>
+                <h3 class="text-lg font-semibold"><a href="{% url 'actor_detail' credit.person.tmdb_id %}">{{ credit.person.name }}</a></h3>
+                <p class="text-gray-400">{{ credit.job.name }}</p>
             </div>
-        </div>
-        
-      
-      {% endblock article%}
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

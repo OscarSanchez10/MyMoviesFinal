@@ -1,0 +1,23 @@
+{% extends "movies/base.html" %}
+{% block title %}Resultados de Búsqueda{% endblock %}
+
+{% block content %}
+<div class="w-full px-4 my-8">
+    <h1 class="text-3xl font-bold mb-4">Resultados de Búsqueda para "{{ query }}"</h1>
+    {% if results %}
+        <div class="grid grid-cols-2 md:grid-cols-6 gap-4">
+            {% for movie in results %}
+                <div class="bg-gray-800 p-4 rounded">
+                    <a href="{% url 'movie_detail' movie.tmdb_id %}">
+                        <img src="https://image.tmdb.org/t/p/w600_and_h900_bestv2/{{ movie.poster_path }}" alt="{{ movie.title }}" class="w-full h-90 object-cover rounded mb-2">
+                    </a>
+                    <h3 class="text-lg font-semibold">{{ movie.title }}</h3>
+                    <p class="text-gray-400">{{ movie.release_date|date:"Y" }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-gray-400">No se encontraron resultados para "{{ query }}".</p>
+    {% endif %}
+</div>
+{% endblock %}

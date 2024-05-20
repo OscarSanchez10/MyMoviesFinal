@@ -1,0 +1,22 @@
+{% extends "movies/base.html" %}
+{% block title %}Añadir Reseña - {{ movie.title }}{% endblock %}
+
+{% block content %}
+<div class="w-full flex justify-center my-8">
+    <div class="bg-gray-800 text-white p-6 rounded-lg w-full md:w-2/3 lg:w-1/2 flex flex-col md:flex-row items-center">
+        <div class="w-full md:w-1/3 flex justify-center mb-6 md:mb-0 md:mr-6">
+            <img class="w-full h-auto rounded-lg" src="https://image.tmdb.org/t/p/w600_and_h900_bestv2/{{ movie.poster_path }}" alt="{{ movie.title }}">
+        </div>
+        <div class="w-full md:w-2/3">
+            <h1 class="text-3xl font-bold mb-4 text-center md:text-left">Añadir Reseña - {{ movie.title }}</h1>
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <div class="mt-4 flex justify-center md:justify-start">
+                    <button type="submit" class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Enviar Reseña</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

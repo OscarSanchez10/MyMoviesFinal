@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db.models import Avg
 
 class Genre(models.Model):
     name=models.CharField(max_length=100)
@@ -17,9 +18,16 @@ class Job(models.Model):
 
 class Person(models.Model):
     name = models.CharField(max_length=128)
+    tmdb_id = models.IntegerField(unique=True, null=True, blank=True)
+    profile_path = models.URLField(blank=True, null=True)
+    biography = models.TextField(blank=True, null=True)
+    birthday = models.DateField(null=True, blank=True)
+    deathday = models.DateField(null=True, blank=True)
+    place_of_birth = models.CharField(max_length=256, blank=True, null=True)
 
     def __str__(self):
         return self.name
+
 
 
 class Movie(models.Model):
@@ -36,6 +44,9 @@ class Movie(models.Model):
 
     def __str__(self):
         return self.title + " " + str(self.release_date.year)
+        
+    def average_rating(self):
+        return self.moviereview_set.aggregate(Avg('rating'))['rating__avg'] or 0
 
 
 class MovieCredit(models.Model):

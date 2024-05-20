@@ -1,28 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title>Página de Ejemplo</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="/static/movies/css/output.css" rel="stylesheet">
-        <script src="https://unpkg.com/htmx.org@1.9.12"></script>
-        <script src="https://unpkg.com/hyperscript.org@0.9.12"></script>
-    </head>
-    <body class="font-sans max-w-4xl mx-auto" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-    <header class="h-12 w-full text-center mx-auto mt-5 border-b-2 border-sky-500">
-        <h1 class="font-medium text-3xl">My Movies</h1>
+<head>
+    <title>{% block title %}Página de Ejemplo{% endblock %}</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="/static/movies/css/output.css" rel="stylesheet">
+    <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+    <script src="https://unpkg.com/hyperscript.org@0.9.12"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body class="font-sans bg-gray-900 text-white">
+    <header class="h-16 w-full flex items-center justify-between px-6 border-b-2 border-sky-500 bg-gray-800">
+        <div class="flex items-center">
+            <a href="{% url 'index' %}" class="mr-4">
+                <i class="fas fa-home text-3xl text-sky-500"></i>
+            </a>
+            <h1 class="font-medium text-3xl">My Movies</h1>
+        </div>
+        <div class="flex items-center">
+            <form method="GET" action="{% url 'search' %}" class="flex">
+                <input type="text" name="q" placeholder="Search" class="bg-gray-700 text-white rounded-full px-4 py-2 mr-4 focus:outline-none">
+                <button type="submit" class="text-white"><i class="fas fa-search"></i></button>
+            </form>
+            <div class="relative ml-4">
+                <button id="user-menu-button" class="flex items-center focus:outline-none">
+                    <span class="ml-2">{{ user_name }}</span>
+                    <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div id="user-menu" class="hidden absolute right-0 mt-2 w-48 bg-gray-800 border border-gray-700 rounded-md shadow-lg py-1">
+                    <a href="{% url 'logout' %}" class="block px-4 py-2 text-sm text-gray-200 hover:bg-gray-700">Logout</a>
+                    <a href="#" class="block px-4 py-2 text-sm text-gray-200 hover:bg-gray-700">Profile</a>
+                </div>
+            </div>
+        </div>
     </header>
-    
-    <article>
-      {% block article %}
-      
-      {% endblock%}
-    </article>
 
-    <footer>
-        <p> Proyecto de ejemplo de la materia Programación Web</p>
-        <p><a href="github.com\miusuario\elrepo"> GitHub Repository</a></p>
+    <div class="w-full px-4">
+        {% block content %}{% endblock %}
+    </div>
+
+    <footer class="mt-10 text-center w-full">
+        <p>Proyecto de ejemplo de la materia Programación Web</p>
+        <p><a href="https://github.com/BestBurgir/MyMoviesFinal" class="text-sky-500 hover:underline">GitHub Repository</a></p>
     </footer>
 
-    </body>
+    <script>
+        document.getElementById('user-menu-button').addEventListener('click', function() {
+            document.getElementById('user-menu').classList.toggle('hidden');
+        });
+    </script>
+</body>
 </html>

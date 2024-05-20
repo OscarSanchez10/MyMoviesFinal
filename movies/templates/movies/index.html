@@ -1,16 +1,96 @@
 {% extends "movies/base.html" %}
-{% block article %}
 
-<a href="your_name/">Pon tu nombre</a>
-    
-{% if movie_list %}
-    <ul>
-    {% for movie in movie_list%}
-        <li><a hx-post="/movies/{{ movie.id }}/" hx-swap="innerHTML" href="/movies/{{ movie.id }}/">{{ movie.title }}</a></li>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>No movies are available.</p>
-{% endif %}
+{% block title %}Inicio{% endblock %}
 
- {% endblock article%}
+{% block content %}
+<article>
+    <!-- Películas más recientes -->
+    <section class="my-8 w-full">
+        <h2 class="text-2xl font-bold mb-4">Películas Más Recientes</h2>
+        <div class="grid grid-cols-2 md:grid-cols-6 gap-4">
+            {% for item in recent_movies_with_ratings %}
+                <div class="bg-gray-800 p-4 rounded">
+                    <a href="{% url 'movie_detail' item.movie.tmdb_id %}">
+                        <img src="https://image.tmdb.org/t/p/w600_and_h900_bestv2/{{item.movie.poster_path}}" alt="{{ item.movie.title }}" class="w-full h-80 object-cover rounded mb-2">
+                    </a>
+                    <h3 class="text-lg font-semibold">{{ item.movie.title }}</h3>
+                    <p class="text-gray-400">{{ item.movie.release_date|date:"Y" }}</p>
+                    <div class="flex items-center text-yellow-400">
+                        {% for star in item.stars.full %}
+                            <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M9.049.286a1 1 0 0 1 1.902 0l1.286 4.016a1 1 0 0 0 .95.69h4.106a1 1 0 0 1 .592 1.81l-3.335 2.526a1 1 0 0 0-.363 1.118l1.286 4.016a1 1 0 0 1-1.536 1.118L10 14.613l-3.345 2.526a1 1 0 0 1-1.536-1.118l1.286-4.016a1 1 0 0 0-.363-1.118L2.707 6.802a1 1 0 0 1 .592-1.81h4.106a1 1 0 0 0 .95-.69L9.049.286z"/></svg>
+                        {% endfor %}
+                        {% if item.stars.half %}
+                            <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M10 15l-5.878 3.09 1.122-6.545L.489 7.545l6.564-.955L10 1l2.947 5.59 6.564.955-4.755 4.001 1.122 6.545z"/></svg>
+                        {% endif %}
+                        {% for star in item.stars.empty %}
+                            <svg class="w-5 h-5 fill-current text-gray-500" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M9.049.286a1 1 0 0 1 1.902 0l1.286 4.016a1 1 0 0 0 .95.69h4.106a1 1 0 0 1 .592 1.81l-3.335 2.526a1 1 0 0 0-.363 1.118l1.286 4.016a1 1 0 0 1-1.536 1.118L10 14.613l-3.345 2.526a1 1 0 0 1-1.536-1.118l1.286-4.016a1 1 0 0 0-.363-1.118L2.707 6.802a1 1 0 0 1 .592-1.81h4.106a1 1 0 0 0 .95-.69L9.049.286z"/></svg>
+                        {% endfor %}
+                        <span class="ml-2">{{ item.average_rating|floatformat:1 }} / 100</span>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Categorías por género -->
+    <section class="my-8 w-full">
+        <h2 class="text-2xl font-bold mb-4">Categorías por Género</h2>
+        {% for genre, items in genre_movies_with_ratings.items %}
+            <div class="mb-8">
+                <h3 class="text-xl font-semibold mb-2">{{ genre.name }}</h3>
+                <div class="grid grid-cols-2 md:grid-cols-6 gap-4">
+                    {% for item in items %}
+                        <div class="bg-gray-800 p-4 rounded">
+                            <a href="{% url 'movie_detail' item.movie.tmdb_id %}">
+                                <img src="https://image.tmdb.org/t/p/w600_and_h900_bestv2/{{item.movie.poster_path}}" alt="{{ item.movie.title }}" class="w-full h-80 object-cover rounded mb-2">
+                            </a>
+                            <h4 class="text-lg font-semibold">{{ item.movie.title }}</h4>
+                            <p class="text-gray-400">{{ item.movie.release_date|date:"Y" }}</p>
+                            <div class="flex items-center text-yellow-400">
+                                {% for star in item.stars.full %}
+                                    <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M9.049.286a1 1 0 0 1 1.902 0l1.286 4.016a1 1 0 0 0 .95.69h4.106a1 1 0 0 1 .592 1.81l-3.335 2.526a1 1 0 0 0-.363 1.118l1.286 4.016a1 1 0 0 1-1.536 1.118L10 14.613l-3.345 2.526a1 1 0 0 1-1.536-1.118l1.286-4.016a1 1 0 0 0-.363-1.118L2.707 6.802a1 1 0 0 1 .592-1.81h4.106a1 1 0 0 0 .95-.69L9.049.286z"/></svg>
+                                {% endfor %}
+                                {% if item.stars.half %}
+                                    <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M10 15l-5.878 3.09 1.122-6.545L.489 7.545l6.564-.955L10 1l2.947 5.59 6.564.955-4.755 4.001 1.122 6.545z"/></svg>
+                                {% endif %}
+                                {% for star in item.stars.empty %}
+                                    <svg class="w-5 h-5 fill-current text-gray-500" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M9.049.286a1 1 0 0 1 1.902 0l1.286 4.016a1 1 0 0 0 .95.69h4.106a1 1 0 0 1 .592 1.81l-3.335 2.526a1 1 0 0 0-.363 1.118l1.286 4.016a1 1 0 0 1-1.536 1.118L10 14.613l-3.345 2.526a1 1 0 0 1-1.536-1.118l1.286-4.016a1 1 0 0 0-.363-1.118L2.707 6.802a1 1 0 0 1 .592-1.81h4.106a1 1 0 0 0 .95-.69L9.049.286z"/></svg>
+                                {% endfor %}
+                                <span class="ml-2">{{ item.average_rating|floatformat:1 }} / 100</span>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    </section>
+
+    <!-- Sección para recomendaciones futuras -->
+    <section class="my-8 w-full">
+        <h2 class="text-2xl font-bold mb-4">Recomendaciones</h2>
+        <div class="grid grid-cols-2 md:grid-cols-6 gap-4">
+            {% for item in recommendations_with_ratings %}
+                <div class="bg-gray-800 p-4 rounded">
+                    <a href="{% url 'movie_detail' item.movie.tmdb_id %}">
+                        <img src="https://image.tmdb.org/t/p/w600_and_h900_bestv2/{{item.movie.poster_path}}" alt="{{ item.movie.title }}" class="w-full h-80 object-cover rounded mb-2">
+                    </a>
+                    <h4 class="text-lg font-semibold">{{ item.movie.title }}</h4>
+                    <p class="text-gray-400">{{ item.movie.release_date|date:"Y" }}</p>
+                    <div class="flex items-center text-yellow-400">
+                        {% for star in item.stars.full %}
+                            <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M9.049.286a1 1 0 0 1 1.902 0l1.286 4.016a1 1 0 0 0 .95.69h4.106a1 1 0 0 1 .592 1.81l-3.335 2.526a1 1 0 0 0-.363 1.118l1.286 4.016a1 1 0 0 1-1.536 1.118L10 14.613l-3.345 2.526a1 1 0 0 1-1.536-1.118l1.286-4.016a1 1 0 0 0-.363-1.118L2.707 6.802a1 1 0 0 1 .592-1.81h4.106a1 1 0 0 0 .95-.69L9.049.286z"/></svg>
+                        {% endfor %}
+                        {% if item.stars.half %}
+                            <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M10 15l-5.878 3.09 1.122-6.545L.489 7.545l6.564-.955L10 1l2.947 5.59 6.564.955-4.755 4.001 1.122 6.545z"/></svg>
+                        {% endif %}
+                        {% for star in item.stars.empty %}
+                            <svg class="w-5 h-5 fill-current text-gray-500" viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M9.049.286a1 1 0 0 1 1.902 0l1.286 4.016a1 1 0 0 0 .95.69h4.106a1 1 0 0 1 .592 1.81l-3.335 2.526a1 1 0 0 0-.363 1.118l1.286 4.016a1 1 0 0 1-1.536 1.118L10 14.613l-3.345 2.526a1 1 0 0 1-1.536-1.118l1.286-4.016a1 1 0 0 0-.363-1.118L2.707 6.802a1 1 0 0 1 .592-1.81h4.106a1 1 0 0 0 .95-.69L9.049.286z"/></svg>
+                        {% endfor %}
+                        <span class="ml-2">{{ item.average_rating|floatformat:1 }} / 100</span>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
+</article>
+{% endblock %}
